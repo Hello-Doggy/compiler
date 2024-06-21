@@ -1,0 +1,100 @@
+fn @getarray(#0: i32* ) -> i32;
+fn @getch( ) -> i32;
+fn @getint( ) -> i32;
+fn @putarray(#0: i32, #1: i32* ) -> ();
+fn @putch(#0: i32 ) -> ();
+fn @putint(#0: i32 ) -> ();
+fn @starttime( ) -> ();
+fn @stoptime( ) -> ();
+fn @get_one(#a: i32 ) -> i32 {
+%entry:
+  let %0 = alloca i32, 1
+  let %1 = store #a, %0
+  let %ret.addr = alloca i32, 1
+  let %2 = store 1, %ret.addr
+  jmp label %exit
+%exit:
+  let %4 = load %ret.addr
+  ret %4
+}
+fn @deepWhileBr(#a: i32, #b: i32 ) -> i32 {
+%entry:
+  let %0 = alloca i32, 1
+  let %1 = store #a, %0
+  let %2 = alloca i32, 1
+  let %3 = store #b, %2
+  let %ret.addr = alloca i32, 1
+  let %4 = alloca i32, 1
+  let %5 = load %0
+  let %6 = load %2
+  let %7 = add %5, %6
+  let %8 = store %7, %4
+  let %9 = alloca i32, 1
+  let %10 = alloca i32, 1
+  jmp label %12
+%12:
+  let %13 = load %4
+  let %14 = lt %13, 75
+  br %14, label %16, label %19
+%16:
+  let %17 = store 42, %9
+  jmp label %23
+%19:
+  let %20 = load %4
+  let %21 = store %20, %ret.addr
+  jmp label %exit
+%23:
+  let %24 = load %4
+  let %25 = lt %24, 100
+  br %25, label %27, label %33
+%27:
+  let %28 = load %4
+  let %29 = load %9
+  let %30 = add %28, %29
+  let %31 = store %30, %4
+  jmp label %35
+%33:
+  jmp label %12
+%35:
+  let %36 = load %4
+  let %37 = gt %36, 99
+  br %37, label %39, label %44
+%39:
+  let %40 = load %9
+  let %41 = mul %40, 2
+  let %42 = store %41, %10
+  jmp label %46
+%44:
+  jmp label %33
+%46:
+  let %47 = call @get_one, 0
+  let %48 = eq %47, 1
+  br %48, label %50, label %55
+%50:
+  let %51 = load %10
+  let %52 = mul %51, 2
+  let %53 = store %52, %4
+  jmp label %55
+%55:
+  jmp label %44
+%exit:
+  let %57 = load %ret.addr
+  ret %57
+}
+fn @main( ) -> i32 {
+%entry:
+  let %ret.addr = alloca i32, 1
+  let %0 = alloca i32, 1
+  let %1 = store 2, %0
+  let %2 = load %0
+  let %3 = load %0
+  let %4 = call @deepWhileBr, %2, %3
+  let %5 = store %4, %0
+  let %6 = load %0
+  let %7 = call @putint, %6
+  let %8 = store 0, %ret.addr
+  jmp label %exit
+%exit:
+  let %10 = load %ret.addr
+  ret %10
+}

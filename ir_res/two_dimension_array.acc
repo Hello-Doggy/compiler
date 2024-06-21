@@ -1,0 +1,161 @@
+fn @getarray(#0: i32* ) -> i32;
+fn @getch( ) -> i32;
+fn @getint( ) -> i32;
+fn @putarray(#0: i32, #1: i32* ) -> ();
+fn @putch(#0: i32 ) -> ();
+fn @putint(#0: i32 ) -> ();
+fn @starttime( ) -> ();
+fn @stoptime( ) -> ();
+fn @main( ) -> i32 {
+%entry:
+  let %ret.addr = alloca i32, 1
+  let %0 = alloca i32, 16
+  let %1 = alloca i32, 1
+  let %2 = alloca i32, 1
+  let %3 = alloca i32, 1
+  let %4 = store 0, %1
+  jmp label %6
+%6:
+  let %7 = load %1
+  let %8 = lt %7, 4
+  br %8, label %10, label %13
+%10:
+  let %11 = store 0, %2
+  jmp label %16
+%13:
+  let %14 = store 0, %1
+  jmp label %34
+%16:
+  let %17 = load %2
+  let %18 = lt %17, 4
+  br %18, label %20, label %29
+%20:
+  let %21 = load %1
+  let %22 = load %2
+  let %23 = offset i32, %0, [%21 < 4], [%22 < 4]
+  let %24 = store 999, %23
+  let %25 = load %2
+  let %26 = add %25, 1
+  let %27 = store %26, %2
+  jmp label %16
+%29:
+  let %30 = load %1
+  let %31 = add %30, 1
+  let %32 = store %31, %1
+  jmp label %6
+%34:
+  let %35 = load %1
+  let %36 = lt %35, 4
+  br %36, label %38, label %47
+%38:
+  let %39 = load %1
+  let %40 = load %1
+  let %41 = offset i32, %0, [%39 < 4], [%40 < 4]
+  let %42 = store 0, %41
+  let %43 = load %1
+  let %44 = add %43, 1
+  let %45 = store %44, %1
+  jmp label %34
+%47:
+  let %48 = offset i32, %0, [0 < 4], [1 < 4]
+  let %49 = store 3, %48
+  let %50 = offset i32, %0, [0 < 4], [3 < 4]
+  let %51 = store 5, %50
+  let %52 = offset i32, %0, [1 < 4], [0 < 4]
+  let %53 = store 2, %52
+  let %54 = offset i32, %0, [1 < 4], [3 < 4]
+  let %55 = store 4, %54
+  let %56 = offset i32, %0, [2 < 4], [1 < 4]
+  let %57 = store 1, %56
+  let %58 = offset i32, %0, [3 < 4], [2 < 4]
+  let %59 = store 2, %58
+  let %60 = store 0, %3
+  jmp label %62
+%62:
+  let %63 = load %3
+  let %64 = lt %63, 4
+  br %64, label %66, label %69
+%66:
+  let %67 = store 0, %1
+  jmp label %87
+%69:
+  let %70 = offset i32, %0, [0 < 4], [3 < 4]
+  let %71 = load %70
+  let %72 = call @putint, %71
+  let %73 = call @putch, 32
+  let %74 = offset i32, %0, [1 < 4], [2 < 4]
+  let %75 = load %74
+  let %76 = call @putint, %75
+  let %77 = call @putch, 32
+  let %78 = offset i32, %0, [2 < 4], [1 < 4]
+  let %79 = load %78
+  let %80 = call @putint, %79
+  let %81 = call @putch, 32
+  let %82 = offset i32, %0, [3 < 4], [0 < 4]
+  let %83 = load %82
+  let %84 = call @putint, %83
+  let %85 = store 0, %ret.addr
+  jmp label %exit
+%87:
+  let %88 = load %1
+  let %89 = lt %88, 4
+  br %89, label %91, label %94
+%91:
+  let %92 = store 0, %2
+  jmp label %99
+%94:
+  let %95 = load %3
+  let %96 = add %95, 1
+  let %97 = store %96, %3
+  jmp label %62
+%99:
+  let %100 = load %2
+  let %101 = lt %100, 4
+  br %101, label %103, label %105
+%103:
+  jmp label %110
+%105:
+  let %106 = load %1
+  let %107 = add %106, 1
+  let %108 = store %107, %1
+  jmp label %87
+%110:
+  let %111 = load %1
+  let %112 = load %3
+  let %113 = offset i32, %0, [%111 < 4], [%112 < 4]
+  let %114 = load %113
+  let %115 = load %3
+  let %116 = load %2
+  let %117 = offset i32, %0, [%115 < 4], [%116 < 4]
+  let %118 = load %117
+  let %119 = add %114, %118
+  let %120 = load %1
+  let %121 = load %2
+  let %122 = offset i32, %0, [%120 < 4], [%121 < 4]
+  let %123 = load %122
+  let %124 = lt %119, %123
+  br %124, label %126, label %141
+%126:
+  let %127 = load %1
+  let %128 = load %2
+  let %129 = offset i32, %0, [%127 < 4], [%128 < 4]
+  let %130 = load %1
+  let %131 = load %3
+  let %132 = offset i32, %0, [%130 < 4], [%131 < 4]
+  let %133 = load %132
+  let %134 = load %3
+  let %135 = load %2
+  let %136 = offset i32, %0, [%134 < 4], [%135 < 4]
+  let %137 = load %136
+  let %138 = add %133, %137
+  let %139 = store %138, %129
+  jmp label %141
+%141:
+  let %142 = load %2
+  let %143 = add %142, 1
+  let %144 = store %143, %2
+  jmp label %99
+%exit:
+  let %146 = load %ret.addr
+  ret %146
+}

@@ -1,0 +1,107 @@
+fn @getarray(#0: i32* ) -> i32;
+fn @getch( ) -> i32;
+fn @getint( ) -> i32;
+fn @putarray(#0: i32, #1: i32* ) -> ();
+fn @putch(#0: i32 ) -> ();
+fn @putint(#0: i32 ) -> ();
+fn @starttime( ) -> ();
+fn @stoptime( ) -> ();
+fn @main( ) -> i32 {
+%entry:
+  let %ret.addr = alloca i32, 1
+  let %0 = alloca i32, 1
+  let %1 = alloca i32, 10
+  let %2 = alloca i32, 1
+  let %3 = alloca i32, 1
+  let %4 = alloca i32, 1
+  let %5 = alloca i32, 1
+  let %6 = alloca i32, 1
+  let %7 = call @getint
+  let %8 = store %7, %0
+  jmp label %10
+%10:
+  let %11 = load %0
+  let %12 = gt %11, 10
+  br %12, label %14, label %17
+%14:
+  let %15 = store 10, %0
+  jmp label %17
+%17:
+  let %18 = store 0, %3
+  jmp label %20
+%20:
+  let %21 = load %3
+  let %22 = load %0
+  let %23 = lt %21, %22
+  br %23, label %25, label %34
+%25:
+  let %26 = load %3
+  let %27 = offset i32, %1, [%26 < 10]
+  let %28 = call @getint
+  let %29 = store %28, %27
+  let %30 = load %3
+  let %31 = add %30, 1
+  let %32 = store %31, %3
+  jmp label %20
+%34:
+  let %35 = call @getint
+  let %36 = store %35, %2
+  let %37 = store 0, %5
+  let %38 = load %0
+  let %39 = sub %38, 1
+  let %40 = store %39, %6
+  jmp label %42
+%42:
+  let %43 = load %5
+  let %44 = load %6
+  let %45 = lt %43, %44
+  br %45, label %47, label %54
+%47:
+  let %48 = load %5
+  let %49 = load %6
+  let %50 = add %48, %49
+  let %51 = div %50, 2
+  let %52 = store %51, %3
+  jmp label %57
+%54:
+  let %55 = store 0, %ret.addr
+  jmp label %exit
+%57:
+  let %58 = load %3
+  let %59 = offset i32, %1, [%58 < 10]
+  let %60 = load %59
+  let %61 = load %2
+  let %62 = eq %60, %61
+  br %62, label %64, label %69
+%64:
+  let %65 = load %3
+  let %66 = call @putint, %65
+  let %67 = store 0, %ret.addr
+  jmp label %exit
+%69:
+  jmp label %73
+%71:
+  jmp label %42
+%73:
+  let %74 = load %3
+  let %75 = offset i32, %1, [%74 < 10]
+  let %76 = load %75
+  let %77 = load %2
+  let %78 = gt %76, %77
+  br %78, label %80, label %85
+%80:
+  let %81 = load %3
+  let %82 = sub %81, 1
+  let %83 = store %82, %6
+  jmp label %90
+%85:
+  let %86 = load %3
+  let %87 = add %86, 1
+  let %88 = store %87, %5
+  jmp label %90
+%90:
+  jmp label %71
+%exit:
+  let %92 = load %ret.addr
+  ret %92
+}

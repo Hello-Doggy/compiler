@@ -89,7 +89,6 @@ void ir(ExprPtr node, Table<varType>& varTable, Table<FuncType>& funcTable, Tabl
                 auto input_type = funcDefNode->input_params;
                 for (int i = 0; i < function->arg_size(); i++) {
                     function->getArg(i)->setName(input_type[i].first);
-                    fmt::print("name {}\n", input_type[i].first);
                 }
             }
         }
@@ -110,6 +109,21 @@ void ir(ExprPtr node, Table<varType>& varTable, Table<FuncType>& funcTable, Tabl
 
                 Function *function = module->getFunction(funcDefNode->funcName);
 
+                // alloca and store for input params
+                for (int i = 0; i < funcDefNode->input_params.size(); i++) {
+                    auto inputParam = funcDefNode->input_params[i];
+                    varTable.add_one_entry(inputParam.first, inputParam.second);
+                    // if (inputParam.second.dimension == 0) {
+                        AllocaInst* alloca_inst = AllocaInst::Create(Type::getIntegerTy(), 1, &function->getEntryBlock());
+                        // alloca_inst->setName(inputParam.first + ".addr");
+                        allocaTable.add_one_entry(inputParam.first, alloca_inst);
+                        Argument* argument = function->getArg(i);
+                        StoreInst::Create(argument, alloca_inst, &function->getEntryBlock());
+                    // } else {
+                    //     allocaTable.add_one_entry(inputParam.first, function->getArg(i));
+                    // }
+                }
+
                 // create ret IR
                 if (funcDefNode->type.returnType != VOID) {
                     AllocaInst* alloca_inst = AllocaInst::Create(Type::getIntegerTy(), 1, &function->getEntryBlock());
@@ -119,21 +133,6 @@ void ir(ExprPtr node, Table<varType>& varTable, Table<FuncType>& funcTable, Tabl
                     RetInst::Create(load_inst, &function->back());
                 } else {
                     RetInst::Create(ConstantUnit::Create(), &function->back());
-                }
-
-                // alloca and store for input params
-                for (int i = 0; i < funcDefNode->input_params.size(); i++) {
-                    auto inputParam = funcDefNode->input_params[i];
-                    varTable.add_one_entry(inputParam.first, inputParam.second);
-                    if (inputParam.second.dimension == 0) {
-                        AllocaInst* alloca_inst = AllocaInst::Create(Type::getIntegerTy(), 1, &function->getEntryBlock());
-                        alloca_inst->setName(inputParam.first + ".addr");
-                        allocaTable.add_one_entry(inputParam.first, alloca_inst);
-                        Argument* argument = function->getArg(i);
-                        StoreInst::Create(argument, alloca_inst, &function->getEntryBlock());
-                    } else {
-                        allocaTable.add_one_entry(inputParam.first, function->getArg(i));
-                    }
                 }
 
                 funcTable.set_func_name(funcDefNode->funcName);
@@ -289,8 +288,11 @@ BasicBlock* translate_stmt(ExprPtr expr, Table<varType>& varTable, Table<FuncTyp
                 num_element *= numberNode->value;
             }
             varTable.add_one_entry(varExpNode->name, varType(varDeclNode->type, 0, dimension_size));
-
-            AllocaInst* alloca_inst = AllocaInst::Create(Type::getIntegerTy(), num_element, &current_bb->getParent()->getEntryBlock().back());
+            AllocaInst* alloca_inst;
+            if (isa<JumpInst>(&current_bb->getParent()->getEntryBlock().back()))
+                alloca_inst = AllocaInst::Create(Type::getIntegerTy(), num_element, &current_bb->getParent()->getEntryBlock().back());
+            else
+                alloca_inst = AllocaInst::Create(Type::getIntegerTy(), num_element, &current_bb->getParent()->getEntryBlock());
             allocaTable.add_one_entry(varExpNode->name, alloca_inst);
             current_bb = translate_stmt(assignStmtNode, varTable, funcTable, allocaTable, funcValueTable, current_bb);
         }

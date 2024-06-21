@@ -1,0 +1,357 @@
+fn @getarray(#0: i32* ) -> i32;
+fn @getch( ) -> i32;
+fn @getint( ) -> i32;
+fn @putarray(#0: i32, #1: i32* ) -> ();
+fn @putch(#0: i32 ) -> ();
+fn @putint(#0: i32 ) -> ();
+fn @starttime( ) -> ();
+fn @stoptime( ) -> ();
+fn @main( ) -> i32 {
+%entry:
+  let %ret.addr = alloca i32, 1
+  let %0 = alloca i32, 1
+  let %1 = store 5, %0
+  let %2 = alloca i32, 5
+  let %3 = alloca i32, 5
+  let %4 = alloca i32, 1
+  let %5 = alloca i32, 1
+  let %6 = alloca i32, 1
+  let %7 = alloca i32, 1
+  let %8 = alloca i32, 1
+  let %9 = alloca i32, 1
+  let %10 = alloca i32, 1
+  let %11 = alloca i32, 1
+  let %12 = store 0, %4
+  jmp label %14
+%14:
+  let %15 = load %4
+  let %16 = load %0
+  let %17 = lt %15, %16
+  br %17, label %19, label %28
+%19:
+  let %20 = load %4
+  let %21 = offset i32, %2, [%20 < 5]
+  let %22 = call @getint
+  let %23 = store %22, %21
+  let %24 = load %4
+  let %25 = add %24, 1
+  let %26 = store %25, %4
+  jmp label %14
+%28:
+  let %29 = store 1, %5
+  jmp label %31
+%31:
+  let %32 = load %5
+  let %33 = load %0
+  let %34 = lt %32, %33
+  br %34, label %36, label %39
+%36:
+  let %37 = store 0, %4
+  jmp label %42
+%39:
+  let %40 = store 0, %4
+  jmp label %324
+%42:
+  let %43 = load %4
+  let %44 = load %0
+  let %45 = load %5
+  let %46 = mul 2, %45
+  let %47 = sub %44, %46
+  let %48 = le %43, %47
+  br %48, label %50, label %68
+%50:
+  let %51 = load %4
+  let %52 = store %51, %6
+  let %53 = load %6
+  let %54 = load %5
+  let %55 = add %53, %54
+  let %56 = store %55, %7
+  let %57 = load %6
+  let %58 = store %57, %8
+  let %59 = load %7
+  let %60 = store %59, %9
+  let %61 = load %9
+  let %62 = load %5
+  let %63 = add %61, %62
+  let %64 = store %63, %10
+  let %65 = load %9
+  let %66 = store %65, %11
+  jmp label %70
+%68:
+  jmp label %162
+%70:
+  let %71 = load %8
+  let %72 = load %7
+  let %73 = lt %71, %72
+  br %73, label %75, label %82
+%75:
+  let %76 = load %11
+  let %77 = load %10
+  let %78 = lt %76, %77
+  br %78, label %80, label %82
+%80:
+  jmp label %84
+%82:
+  jmp label %120
+%84:
+  let %85 = load %8
+  let %86 = offset i32, %2, [%85 < 5]
+  let %87 = load %86
+  let %88 = load %11
+  let %89 = offset i32, %2, [%88 < 5]
+  let %90 = load %89
+  let %91 = lt %87, %90
+  br %91, label %93, label %104
+%93:
+  let %94 = load %4
+  let %95 = offset i32, %3, [%94 < 5]
+  let %96 = load %8
+  let %97 = offset i32, %2, [%96 < 5]
+  let %98 = load %97
+  let %99 = store %98, %95
+  let %100 = load %8
+  let %101 = add %100, 1
+  let %102 = store %101, %8
+  jmp label %115
+%104:
+  let %105 = load %4
+  let %106 = offset i32, %3, [%105 < 5]
+  let %107 = load %11
+  let %108 = offset i32, %2, [%107 < 5]
+  let %109 = load %108
+  let %110 = store %109, %106
+  let %111 = load %11
+  let %112 = add %111, 1
+  let %113 = store %112, %11
+  jmp label %115
+%115:
+  let %116 = load %4
+  let %117 = add %116, 1
+  let %118 = store %117, %4
+  jmp label %70
+%120:
+  let %121 = load %8
+  let %122 = load %7
+  let %123 = lt %121, %122
+  br %123, label %125, label %139
+%125:
+  let %126 = load %4
+  let %127 = offset i32, %3, [%126 < 5]
+  let %128 = load %8
+  let %129 = offset i32, %2, [%128 < 5]
+  let %130 = load %129
+  let %131 = store %130, %127
+  let %132 = load %8
+  let %133 = add %132, 1
+  let %134 = store %133, %8
+  let %135 = load %4
+  let %136 = add %135, 1
+  let %137 = store %136, %4
+  jmp label %120
+%139:
+  jmp label %141
+%141:
+  let %142 = load %11
+  let %143 = load %10
+  let %144 = lt %142, %143
+  br %144, label %146, label %160
+%146:
+  let %147 = load %4
+  let %148 = offset i32, %3, [%147 < 5]
+  let %149 = load %11
+  let %150 = offset i32, %2, [%149 < 5]
+  let %151 = load %150
+  let %152 = store %151, %148
+  let %153 = load %11
+  let %154 = add %153, 1
+  let %155 = store %154, %11
+  let %156 = load %4
+  let %157 = add %156, 1
+  let %158 = store %157, %4
+  jmp label %141
+%160:
+  jmp label %42
+%162:
+  let %163 = load %4
+  let %164 = load %5
+  let %165 = add %163, %164
+  let %166 = load %0
+  let %167 = lt %165, %166
+  br %167, label %169, label %185
+%169:
+  let %170 = load %4
+  let %171 = store %170, %6
+  let %172 = load %6
+  let %173 = load %5
+  let %174 = add %172, %173
+  let %175 = store %174, %7
+  let %176 = load %6
+  let %177 = store %176, %8
+  let %178 = load %7
+  let %179 = store %178, %9
+  let %180 = load %0
+  let %181 = store %180, %10
+  let %182 = load %9
+  let %183 = store %182, %11
+  jmp label %190
+%185:
+  jmp label %285
+%187:
+  let %188 = store 0, %4
+  jmp label %303
+%190:
+  let %191 = load %8
+  let %192 = load %7
+  let %193 = lt %191, %192
+  br %193, label %195, label %202
+%195:
+  let %196 = load %11
+  let %197 = load %10
+  let %198 = lt %196, %197
+  br %198, label %200, label %202
+%200:
+  jmp label %204
+%202:
+  jmp label %243
+%204:
+  let %205 = load %8
+  let %206 = offset i32, %2, [%205 < 5]
+  let %207 = load %206
+  let %208 = load %11
+  let %209 = offset i32, %2, [%208 < 5]
+  let %210 = load %209
+  let %211 = lt %207, %210
+  br %211, label %213, label %227
+%213:
+  let %214 = load %4
+  let %215 = offset i32, %3, [%214 < 5]
+  let %216 = load %8
+  let %217 = offset i32, %2, [%216 < 5]
+  let %218 = load %217
+  let %219 = store %218, %215
+  let %220 = load %8
+  let %221 = add %220, 1
+  let %222 = store %221, %8
+  let %223 = load %4
+  let %224 = add %223, 1
+  let %225 = store %224, %4
+  jmp label %241
+%227:
+  let %228 = load %4
+  let %229 = offset i32, %3, [%228 < 5]
+  let %230 = load %11
+  let %231 = offset i32, %2, [%230 < 5]
+  let %232 = load %231
+  let %233 = store %232, %229
+  let %234 = load %11
+  let %235 = add %234, 1
+  let %236 = store %235, %11
+  let %237 = load %4
+  let %238 = add %237, 1
+  let %239 = store %238, %4
+  jmp label %241
+%241:
+  jmp label %190
+%243:
+  let %244 = load %8
+  let %245 = load %7
+  let %246 = lt %244, %245
+  br %246, label %248, label %262
+%248:
+  let %249 = load %4
+  let %250 = offset i32, %3, [%249 < 5]
+  let %251 = load %8
+  let %252 = offset i32, %2, [%251 < 5]
+  let %253 = load %252
+  let %254 = store %253, %250
+  let %255 = load %8
+  let %256 = add %255, 1
+  let %257 = store %256, %8
+  let %258 = load %4
+  let %259 = add %258, 1
+  let %260 = store %259, %4
+  jmp label %243
+%262:
+  jmp label %264
+%264:
+  let %265 = load %11
+  let %266 = load %10
+  let %267 = lt %265, %266
+  br %267, label %269, label %283
+%269:
+  let %270 = load %4
+  let %271 = offset i32, %3, [%270 < 5]
+  let %272 = load %11
+  let %273 = offset i32, %2, [%272 < 5]
+  let %274 = load %273
+  let %275 = store %274, %271
+  let %276 = load %11
+  let %277 = add %276, 1
+  let %278 = store %277, %11
+  let %279 = load %4
+  let %280 = add %279, 1
+  let %281 = store %280, %4
+  jmp label %264
+%283:
+  jmp label %187
+%285:
+  let %286 = load %4
+  let %287 = load %0
+  let %288 = lt %286, %287
+  br %288, label %290, label %301
+%290:
+  let %291 = load %4
+  let %292 = offset i32, %3, [%291 < 5]
+  let %293 = load %4
+  let %294 = offset i32, %2, [%293 < 5]
+  let %295 = load %294
+  let %296 = store %295, %292
+  let %297 = load %4
+  let %298 = add %297, 1
+  let %299 = store %298, %4
+  jmp label %285
+%301:
+  jmp label %187
+%303:
+  let %304 = load %4
+  let %305 = load %0
+  let %306 = lt %304, %305
+  br %306, label %308, label %319
+%308:
+  let %309 = load %4
+  let %310 = offset i32, %2, [%309 < 5]
+  let %311 = load %4
+  let %312 = offset i32, %3, [%311 < 5]
+  let %313 = load %312
+  let %314 = store %313, %310
+  let %315 = load %4
+  let %316 = add %315, 1
+  let %317 = store %316, %4
+  jmp label %303
+%319:
+  let %320 = load %5
+  let %321 = mul %320, 2
+  let %322 = store %321, %5
+  jmp label %31
+%324:
+  let %325 = load %4
+  let %326 = load %0
+  let %327 = lt %325, %326
+  br %327, label %329, label %339
+%329:
+  let %330 = load %4
+  let %331 = offset i32, %2, [%330 < 5]
+  let %332 = load %331
+  let %333 = call @putint, %332
+  let %334 = call @putch, 32
+  let %335 = load %4
+  let %336 = add %335, 1
+  let %337 = store %336, %4
+  jmp label %324
+%339:
+  let %340 = store 0, %ret.addr
+  jmp label %exit
+%exit:
+  let %342 = load %ret.addr
+  ret %342
+}
