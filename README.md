@@ -1,4 +1,4 @@
-# AccSys CMake Template
+# README
 
 #### Get Source
 
@@ -21,8 +21,8 @@ build/complier test/filename.sy
 ```
 
 * 会自动生成中间代码`filename.acc`，位于`ir_res/`
-* 会自动生成汇编代码`filename.acc`，位于`asm_res/`
-* 会自动生成可执行文件`filename.acc`，位于`exe/`
+* 会自动生成汇编代码`filename.S`，位于`asm_res/`
+* 会自动生成可执行文件`filename`，位于`exe/`
 * 输入下面指令运行可执行文件进行测试
 
 ```bash
