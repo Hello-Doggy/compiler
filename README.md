@@ -1,84 +1,91 @@
 # AccSys CMake Template
 
-## Build
-
-### Prerequisites
-
-- 支持 C++17 的编译器，例如 clang 或 gcc (推荐 gcc 9.4.0 或更高的版本，有完整 C++ 17 支持)
-- flex & bison
-
-#### Install Dependencies
-
-#### Get Template Source
+#### Get Source
 
 ```bash
-git clone git@git.zju.edu.cn:accsys/accsys-cmake-template.git
+git clone https://github.com/Hello-Doggy/compiler.git
 ```
 
 
-### Build
+#### Build
 
 ```bash
 cmake -B build          # create & generate build configs under `build/` directory
 cmake --build build     # build target in `build/` directory
 ```
 
-#### CMake Build Type
-
-支持 `Debug` 或者 `Release` 构建配置：
-
-- 对于单配置构建系统 Makefile 和 Ninja，你可以通过设置 `CMAKE_BUILD_TYPE` 变量来指定构建配置
-- 对于多配置构建系统 Visual Studio， Xcode 或者 Ninja Multi-Config，我们已经设置了 `Debug` 和 `Release` 两种配置
-
-对于单配置构建系统，`CMAKE_BUILD_TYPE` 没有设置默认值，不会启用相关编译参数.
-在 `Debug` 模式下，默认开启 address sanitizer
-
-实例：
+#### Test
 
 ```bash
-# single configuration build systems, Debug build
-cmake -B build -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefile"
-cmake --build build
-# single configuration build systems, Release build
-cmake -B build -DCMAKE_BUILD_TYPE=Release -G "Unix Makefile"
-cmake --build build
-
-# multi configuration build systems
-cmake -B build -G "Ninja Multi-Config"
-# Debug build
-cmake --build build --config Debug
-# Release build
-cmake --build build --config Release
+build/complier test/filename.sy
 ```
 
-#### Accsys Components
+* 会自动生成中间代码`filename.acc`，位于`ir_res/`
+* 会自动生成汇编代码`filename.acc`，位于`asm_res/`
+* 会自动生成可执行文件`filename.acc`，位于`exe/`
+* 输入下面指令运行可执行文件进行测试
 
-为了方便起见，我们把 IR 等相关组件的代码放在了 `accsys/` 目录下，提供了头文件和动态链接库.
-如果你不使用我们提供的模板，但打算复用一些 IR 的轮子，可以复制 `accsys/` 下的内容，并添加下列内容到你的 CMakeLists.txt
-
-```cmake
-# compile accsys components.
-add_subdirectory(accsys)
-
-# link accsys libraries to the executable.
-target_link_libraries(compiler PRIVATE accsys::accsys)
-# add accsys header files directory for the source files of the compiler.
-target_include_directories(compiler INTERFACE accsys::accsys)
+```bash
+qemu-riscv64-static exe/filename
 ```
 
-#### Adjust Build Options (Optional)
 
-你可以自行修改 `CMakeLists.txt` 并添加编译选项或开关.
-下面提供一些示例：
 
-- 为 `clangd` 导出 `compile_commands.json`，可以添加 `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`.
-- 选用不同的构建系统生成器，使用 `-G` 指定，例如使用 `Ninja` 可以添加 `-G Ninja`.
-- 添加选项 `-DACCSYS_BUILD_TESTS=ON` 可以启用编译 googletest 与 accsys 库的单元测试，使用 `cmake --build build --target test` 测试
-- 对于 Unix Makefile 构建系统生成器，默认为单线程编译，可以使用 `--parallel` 并行，例如 `cmake --build build --parallel 16`
+#### 1 指令选择
 
-## FAQ
+`src/backend/macro_expansion`
 
-### Why newly added C++ source files are not compiled?
+* 整个lab4统一用sp实现，没有用到fp，所有变量都保存在栈中，也就不需要callee-saved寄存器
 
-为了方便起见，我们使用 `file(GLOB)` 来指定编译的源代码，你添加了新的源码文件后 `CMakeCache` 并不会更新，构建系统不会意识到更改.
-如果遇到这种情况，请重新执行一次 `cmake`.
+* 实现了最简单的 "macro expansion" 风格的指令选择
+
+* 遍历`filename.acc`，生成`vreg_filename.S`，即对应的虚拟寄存器版本
+
+* 通过两张表分别记录函数的信息和在栈中的”偏移信息“
+
+  * 在这一步的生成结果中并不会在函数开头加上`addi sp, sp, -framesize`类似的指令，因为再遍历ir指令的过程中还没法确认函数需要的栈空间的大小，所以”偏移信息“记录的都是负值，每有一个局部变量就-4并存入表，对应指南中的下面这段话
+
+    > 一种可能的解决的方法是，一个抽象的结构代替栈上的地址，例如给需要存在在栈上所有的“物体”编号，这样就可以使用“物体”编号加上单个“物体”内偏移量的二元组编码，等到指令选择结束后再统一把这个编码翻译成底层的 `sp/fp` 加上偏移量的方式
+
+* 对于函数之间的传参，我统一用栈实现
+  * 为了确保能正确调用运行时库，所以尽管我统一用栈实现，但我还是会把参数传给`a0,a1,..(根据参数数量)`
+  * 我会把需要传的参数通过caller存放在callee函数栈帧的开头，因为这样caller可以通过`-8(sp),16(sp)`这样的方式实现而不容易出错。
+  * 因为原先的ir代码会自动load传入参数中的标量并store到栈，lab4中对于callee来说就不再需要翻译开头的store了，因为caller已经帮我们store到栈上了
+* 对于指针（数组）的传输，我统一用传地址实现
+  * 对于callee来说，输入的参数其实都是标量，但我可以通过函数信息表来确认是地址还是值
+  * 我们在caller中传输给callee的地址是相对于caller的sp的偏移，但因为callee的sp会在开头减去callee的sp，所以我们要在callee中把传入的地址重新加上callee的sp，使得offset(callee_sp)指向caller中正确的位置
+  * 对于特殊情况，比如全局变量数组作为参数传给callee，我们需要先将全局变量减去caller的sp，统一成局部变量的地址表示传给callee
+* 对于函数调用的返回值
+  * 我们一方面需要判断函数是否有返回值，另一方面需要检查返回值是否在后续有用到
+  * 如果都满足，则需要从`a0`mv出来，反之则不需要
+  * “检查返回值是否在后续有用到”是为了防止有的函数有返回值但不赋值，比如对于一个有返回值的函数，这两种调用都有可能，`a = check();`和`check();`。这在ir代码中并不会区分，但是如果无脑的mv到一个临时寄存器中，可能会在寄存器分配中一直占用某个物理寄存器而导致寄存器不够。
+
+* 其他细节太多了，说不过来了(x
+
+
+
+#### 2 寄存器分配
+
+`src/backend/reg_alloca`
+
+* 因为我们是用栈保存局部变量，所以我们只需要考虑`t0-t6`的临时寄存器的分配
+
+* 我们会和指令选择遍历ir代码一样，遍历指令选择生成的`vreg_filename.S`生成`preg_filename.S`
+* 我们会用一个数组来记录对应的`t0,t1,...`否用于某个虚拟寄存器
+* 我们会在遍历的过程中根据指令的类型和参数来判断某个物理寄存器是否用完或是否需要，依此来更新我们的寄存器数组，并决定释放或分配某个物理寄存器
+* 除此以外，我们还会借助这个寄存器数组来判断ld的地址是否是`offset`产生的计算结果，还是某个局部或全局变量的地址
+* 同样，我们同样需要根据这个寄存器数组来判断是否需要在函数调用前保存某些寄存器到栈上（caller-saved)
+
+
+
+#### 3 栈帧管理
+
+`src/backend/stack_alloca`
+
+* 大部分的栈帧操作其实在前两步就顺便完成了，这一步是用来将我们之前记录的偏移量重新“转化”一下
+* 我们对原先的偏移表进行处理，计算每个函数最终需要的栈帧大小`frame_size`，并将负的偏移值转换成正的相对于`sp-frame_size`后的sp的正偏移值，在函数的开头和结尾分别加上`addi sp, sp, -frame_size`, `addi sp, sp, frame_size`
+* 我们遍历寄存器分配生成的`preg_filename.S`，将其中地址相关的信息替换成最终的偏移量或者绝对地址，生成`filename.S`
+
+
+
+
