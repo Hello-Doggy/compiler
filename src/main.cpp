@@ -32,7 +32,7 @@ int main(int argc, char **argv)
     // ir_translate(root, argv[2], true);  // debug version
     ir_to_asm("ir_res/" + name + ".acc", name + ".S");
     string command = "clang -nostdlib -nostdinc -static -target riscv64-unknown-linux-elf -march=rv64im -mabi=lp64 -fuse-ld=lld asm_res/" +
-                    name + ".S -o exe/" + name + " -L ../sysy-runtime-lib-master/build/ -lsysy";
+                    name + ".S -o exe/" + name + " -L sysy_build/ -lsysy";
     system(command.c_str());
     return result;
 }
